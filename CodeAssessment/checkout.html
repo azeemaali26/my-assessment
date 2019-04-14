@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Checkout Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+    <style>
+        input[type="number"] {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 align="middle">Checkout</h1>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <!-- Intergating the paypal payment option---> 
+            <input type="hidden" name="cmd" value="_cart">
+            <input type="hidden" name="upload" value="1">
+            <input type="hidden" name="business" value="seller@gmail.com">
+            <table class="table table-hover">
+                <thead class="thead-inverse">
+                    <tr>
+                        <th>Qty</th>
+                        <th>Item Name</th>
+                        <th>Cost</th>
+                        <th class="text-xs-right">Subtotal</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody id="output"> </tbody>
+            </table>
+            <a href="main.html" class="btn btn-success">Continue Shopping</a>
+            <input type="submit" class="btn btn-primary " value="Checkout with PayPal">  </form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        var shopcart = [];
+        $(document).ready(function () {
+            outputCart(); 
+            //event listenser for changing the quantity 
+            $('#output').on('change', '.dynqua', function () {
+                //changes the value in the array if the quantity goes up
+                var iteminfo = $(this.dataset)[0];
+                var itemincart = false;
+                var removeItem = false;
+                var removeIndex = 0;
+                //current quantity is equal to the value in the shopping cart
+                var qty = $(this).val();
+                //if its less than or equal to 0 then dont charge the customer and update the qty to 0; 
+                if (qty <= 0) {
+                    qty = 0;
+                    $(this).val(0);
+                }
+                //when the qty is zero it will remove it from the checkout page
+                $.each(shopcart, function (index, value) {
+                    if (value.id == iteminfo.id) {
+                        //then remove the value at the index value
+                        if (qty <= 0) {
+                            removeItem = true;
+                            removeIndex = index;
+                        }
+                        //add to the shopping cart
+                        else {
+                            shopcart[index].qty = qty;
+                            itemincart = true;
+                        }
+                    }
+                })
+                //if removeitem is clicked then delete the item from the shopping cart
+                if (removeItem) {
+                    shopcart.splice(removeIndex, 1);
+                }
+                //global object that mains the storage area
+                sessionStorage["sca"] = JSON.stringify(shopcart);
+                //doing an update to the session storage
+                outputCart();
+            })
+
+            function outputCart() {
+                //checks whenever the pages loads if the session storage has a value. 
+                if (sessionStorage["sca"] != null) {
+                     //then reset the value for the shopping cart by parsing into a useable object as a string value.
+                    shopcart = JSON.parse(sessionStorage["sca"].toString());
+                }
+                //this is where all the calulations are being done. 
+                var holderHTML = '';
+                var total = 0;
+                var itemCnt = 0;
+                $.each(shopcart, function (index, value) {
+                    var stotal = value.qty * value.price;
+                    var a = (index + 1);
+                    total += stotal;
+                    itemCnt += parseInt(value.qty);
+                    //printing it to the screen
+                    holderHTML += '<tr><td><input size="5"  type="number" class="dynqua" name="quantity_' + a + '" value="' + value.qty + '" data-id="' + value.id + '"></td><td><input type="hidden" name="item_name_' + a + '" value="' + value.name + ' ' + value.s + '">' + value.name + ' </td><td><input type="hidden" name="amount_' + a + '" value="' + formatMoney(value.price) + '"> $' + formatMoney(value.price) + ' </td><td class="text-xs-right"> ' + formatMoney(stotal) + '</td><td><span class="remove-item btn btn-danger">x</span></td></tr>';
+                })
+                holderHTML += '<tr><td colspan="3" class="text-xs-right">Total</td><td class="text-xs-right">$' + formatMoney(total) + '</td></tr>';
+                $('#output').html(holderHTML);
+            }
+            //styling the checkout page
+            $('#output').on('click', '.remove-item', function () {
+                var itemInfo = $(this.dataset)[0];
+                var itemToDelete = $('.remove-item').index(this);
+                shopcart.splice(itemToDelete, 1);
+                sessionStorage["sca"] = JSON.stringify(shopcart);
+                outputCart();
+            })
+             //this is just used to create a number that has two decimal places
+            function formatMoney(n) {
+                return (n / 100).toFixed(2);
+            }
+        })
+    </script>
+</body>
+
+</html>

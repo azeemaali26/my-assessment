@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Acme</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+   <h1 align="left">ACME STORE</h1>
+    <style>
+        #output {
+            clear: both;
+        }
+        
+        #checkoutdiv {
+            display: none;
+        }
+        .footer {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>  
+<body>
+     <header class="header">
+        <div class="htop">
+            <div id="checkoutdiv " class="container">
+                <div class="row">
+                   
+                    <div class="col-md- text-xs-right"> <span class="btn btn-success" data-toggle="modal" data-target="#cart">Open Shopping Cart</span><a href="checkout.html" class="btn btn-primary">Proceed to checkout</a></div>
+                     <div class="col-md- text-xs-right ">(<span class="items text-muted"></span> <small>items</small>) <span class="total"></span> </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="hbot">
+            <div class="container">
+                <nav class="navbar navbar-full navbar-dark bg-inverse">
+                   
+                   
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-block">
+                            <h3 class="card-title">Chronograph</h3>
+                            <h6 class="card-subtitle text-muted">$500.01</h6> <img src="chronograph.png" class="img-fluid"> </div>
+                        <div class="card-block">
+                            <div class="card-text"> <a href="#" class="card-link productItem btn btn-primary" data-name="Chronograh"  data-price="50001" data-id="1">Add to Cart</a> </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-block">
+                            <h3 class="card-title">Quartz</h3>
+                            <h6 class="card-subtitle text-muted">$10.99</h6> <img src="Quartz.png" class="img-fluid"> </div>
+                        <div class="card-block">
+                            <div class="card-text"><a href="#" class="productItem btn btn-primary" data-name="Quartz"  data-price="1099" data-id="2">Add to Cart</a> </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-block">
+                            <h3 class="card-title">Weekender</h3>
+                            <h6 class="card-subtitle text-muted">$19.99</h6> <img src="weekender.png" class="img-fluid"> </div>
+                        <div class="card-block">
+                            <div class="card-text"> <a href="#" class="productItem btn btn-primary" data-name="Weekender"  data-price="1999" data-id="3">Add to Cart</a> </div>
+                        </div>
+                    </div>
+                </div>
+               
+                    </div>
+                </div>
+            </div>
+    <footer class="footer">
+        <div class="container">
+            <p class="text-xs-center">By: Azeema Ali </p>
+        </div>
+    </footer>
+    <div class="modal fade" id="cart" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">Shopping Cart</h4></div>
+                <div class="modal-body">
+                    <table class="table table-hover">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>Qty</th>
+                                <th>Item Name</th>
+                                <th>Cost</th>
+                                <th class="text-xs-right">Subtotal</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody id="output"> </tbody>
+                    </table>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Continue Shopping</button><a href="checkout.html" class="btn btn-primary">Proceed to checkout</a></div>
+            </div>
+        </div>
+    </div>
+   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+    <script>
+        //holds all the shopping values in an array
+        var shopcart = [];
+        //this is used to make sure that all the clicks or eventlisteners
+        $(document).ready(function () {
+            outputCart();
+            //add to cart eventListener
+            $(".productItem").click(function (e) {
+                //hyperlink by default takes you somewhere, so to avoid that we use the preventDefault. 
+                e.preventDefault();
+                //holding the dataset object so we can pull out the data's information from the a specific item. The [0] picks up the first item.
+                var iteminfo = $(this.dataset)[0];
+                //this will help us add more than 1 quantity of the same item to the cart
+                iteminfo.qty = 1;
+                //help us keep track if the same item is in the cart or not
+                var itemincart = false;
+                //rather than adding a brand new item to the array when we click on the same item more than once, this for loop will check if the items are the same then just update the quantity and not the array. 
+                $.each(shopcart, function (index, value) {
+                    if (value.id == iteminfo.id) {
+                        //updating the quantity as an integer value and not a string value
+                        value.qty = parseInt(value.qty) + parseInt(iteminfo.qty);
+                        itemincart = true;
+                    }
+                })
+                //if the item is not in the array then push it in it
+                if (!itemincart) {
+                    shopcart.push(iteminfo);
+                }
+                //global object that mains the storage area
+                sessionStorage["sca"] = JSON.stringify(shopcart);
+                //doing an update to the session storage
+                outputCart();  
+            })
+            //this function will parse through the session storage to update the array  
+            function outputCart() {
+                //checks whenever the pages loads if the session storage has a value. 
+                if (sessionStorage["sca"] != null) {
+                    //then reset the value for the shopping cart by parsing it as a string value.
+                    shopcart = JSON.parse(sessionStorage["sca"].toString());
+                    //shows the number of items in the cart in the header.
+                    $('#checkoutdiv').show();
+                }
+                var holderHTML = '';
+                var total = 0;
+                var itemCnt = 0;
+                //this will add the item, price(does the calulation), and quanity to the shopping cart so its visble. 
+                $.each(shopcart, function (index, value) {
+                    var stotal = value.qty * value.price;
+                    total += stotal;
+                    //number of items i
+                    itemCnt += parseInt(value.qty);
+                    //this is printing the items name,price and quanity 
+                    holderHTML += '<tr><td>' + value.qty + '</td><td>' + ' ' + value.name + '</td><td> ' + formatMoney(value.price) + ' </td><td class="text-xs-right"> ' + formatMoney(stotal) + '</td><td><span class="remove-item btn btn-danger">x</span></td></tr>';
+                })
+                holderHTML += '<tr><td colspan="3" class="text-xs-right">Total</td><td class="text-xs-right">' + formatMoney(total) + '</td></tr>';
+                $('#output').html(holderHTML);
+                $('.total').html(formatMoney(total));
+                $('.items').html(itemCnt);
+            }
+            //this is just used to create a number that has two decimal places
+            function formatMoney(money) {
+                return '$' + (money / 100).toFixed(2);
+            }
+            $('#output').on('click', '.remove-item', function () {
+                var itemInfo = $(this.dataset)[0];
+                var itemToDelete = $('.remove-item').index(this);
+                shopcart.splice(itemToDelete, 1);
+                sessionStorage["sca"] = JSON.stringify(shopcart);
+                outputCart();
+            })
+        })
+    </script>
+</body>
+
+</html>
